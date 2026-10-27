@@ -25,6 +25,8 @@ model User {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String?
+  isGuest   Boolean  @default(true)
+  password  String? // null for guests, set once they register
   createdAt DateTime @default(now())
 
   orders Order[]
@@ -37,6 +39,13 @@ model Order {
   status    OrderStatus @default(PENDING)
   total     Int
   createdAt DateTime    @default(now())
+
+  // shipping info — kept on Order since it can differ per order
+  // even for a registered user (different address each time)
+  address    String
+  city       String
+  postalCode String
+  country    String
 
   items OrderItem[]
 }

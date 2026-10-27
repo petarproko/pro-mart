@@ -1,3 +1,5 @@
+'use server';
+
 import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
 
@@ -25,4 +27,28 @@ export async function getOrCreateCart() {
   });
 
   return newCart;
+}
+
+export async function getCartWithProducts() {
+  const cookieStore = await cookies();
+  const existingCartId = cookieStore.get(CART_COOKIE)?.value;
+
+  if (!existingCartId) {
+    return {
+      items: [],
+      total: 0
+    };
+  }
+
+  const items = await prisma.cartItem.findMany({
+    where: { cartId: existingCartId },
+    include: { product: true },
+  });
+
+  const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+
+  return Promise.resolve({
+    items,
+    total
+  });
 }

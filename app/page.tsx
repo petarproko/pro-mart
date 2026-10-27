@@ -14,16 +14,17 @@ export default async function Home() {
         {products.map((product) => (
           <div
             key={product.id}
-            className="border border-like-black rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+            className="border border-like-black rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-shadow"
           >
             <Link href={`/products/${product.slug}`}>
-              <Image
-                src="/images/product-image.jpg"
-                alt="Product image"
-                width={400}
-                height={300}
-                className="object-cover"
-              />
+              <div className="relative w-full h-48">
+                <Image
+                  src="/images/product-image.jpg"
+                  alt={product.name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
 
               <div className="p-4">
                 <h2 className="text-lg font-semibold text-like-black">{product.name}</h2>

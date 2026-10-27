@@ -1,6 +1,7 @@
-import { getOrCreateCart } from '@/lib/cart';
+import { getCartWithProducts, getOrCreateCart } from '@/lib/cart';
 import { prisma } from '@/lib/prisma';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Metadata } from 'next/types';
 
 export const dynamic = 'force-dynamic'; // cart is per-user, never static/ISR
@@ -11,14 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function CartPage() {
-  const cart = await getOrCreateCart();
-
-  const items = await prisma.cartItem.findMany({
-    where: { cartId: cart.id },
-    include: { product: true }, // pulls in full product data per item
-  });
-
-  const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const { items, total } = await getCartWithProducts();
 
   return (
     <main className="min-h-screen bg-like-black px-4 py-10 text-white">
@@ -32,6 +26,7 @@ export default async function CartPage() {
           <p className="mt-2 text-white/50">
             {items.length} {items.length === 1 ? "item" : "items"} in your cart
           </p>
+          {items.length === 0 ? <p className="mt-2 text-white/50">Everything is for sale! Do you want my logo, make a offer maybe one that I cannot refuse?</p> : null}
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
@@ -44,13 +39,13 @@ export default async function CartPage() {
               >
                 {/* Product image */}
                 <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-xl bg-white/10">
-                    <Image
-                      src={item.product.imageUrl || '/images/product-image.jpg'}
-                      alt={item.product.name}
-                      fill
-                      className="object-cover"
-                    />
-                  
+                  <Image
+                    src={item.product.imageUrl || '/images/product-image.jpg'}
+                    alt={item.product.name}
+                    fill
+                    className="object-cover"
+                  />
+
                 </div>
 
                 {/* Product information */}
@@ -149,13 +144,19 @@ export default async function CartPage() {
               </div>
             </div>
 
-            <button className="mt-6 w-full rounded-xl bg-like-yellow px-6 py-4 font-bold text-like-black transition hover:bg-like-orange active:scale-[0.98]">
+            <Link
+              href="/checkout"
+              className="mt-6 mb-6 block w-full text-center rounded-xl bg-like-yellow px-6 py-4 font-bold text-like-black transition hover:bg-like-orange active:scale-[0.98]"
+            >
               Proceed to Checkout
-            </button>
+            </Link>
 
-            <button className="mt-3 w-full rounded-xl border border-white/10 px-6 py-3 font-medium text-white/70 transition hover:border-like-yellow/40 hover:text-white">
+            <Link
+              href="/"
+              className="block w-full text-center rounded-xl border border-white/10 px-6 py-3 font-medium text-white/70 transition hover:border-like-yellow/40 hover:text-white active:scale-[0.98]"
+            >
               Continue Shopping
-            </button>
+            </Link>
           </aside>
         </div>
       </div>

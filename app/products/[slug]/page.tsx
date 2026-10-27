@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import { AddToCartButton } from '@/components/AddToCartButton';
+import Link from 'next/link';
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -26,7 +27,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export const revalidate = 6000; //next.js dont rename it stupid
+export const revalidate = 6000;
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -36,9 +37,6 @@ export default async function ProductDetailPage({ params }: Props) {
   const { slug } = await params;
 
   const product = await prisma.product.findUnique({ where: { slug } });
-  // const qqq = await prisma.cart.findMany();
-  const qqq = await prisma.cartItem.findMany();
-console.log(qqq);
 
   if (product === null) {
     notFound();
@@ -55,9 +53,9 @@ console.log(qqq);
       <div className="border-b border-gray-100">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <nav className="flex items-center gap-2 text-sm text-gray-500">
-            <a href="/products" className="transition hover:text-gray-900">
+            <Link href="/" className="transition hover:text-gray-900">
               products
-            </a>
+            </Link>
 
             <svg
               className="h-4 w-4"
@@ -91,24 +89,8 @@ console.log(qqq);
 
           <div className="flex flex-col justify-center">
             <AddToCartButton productId={product.id} />
-            {/* Stock badge */}
-            <div className="mb-5">
-              {/* {isOutOfStock ? (
-                <span className="inline-flex rounded-full bg-red-50 px-3 py-1 text-sm font-medium text-red-700">
-                  Out of stock
-                </span>
-              ) : product.stock <= 5 ? (
-                <span className="inline-flex rounded-full bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700">
-                  Only {product.stock} left
-                </span>
-              ) : (
-                <span className="inline-flex rounded-full bg-green-50 px-3 py-1 text-sm font-medium text-green-700">
-                  In stock
-                </span>
-              )} */}
-            </div>
 
-            <h1 className="text-3xl font-bold tracking-tight text-gray-950 sm:text-4xl">
+            <h1 className="mt-5 text-3xl font-bold tracking-tight text-gray-950 sm:text-4xl">
               {product.name}
             </h1>
 

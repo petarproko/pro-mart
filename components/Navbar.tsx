@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { Button } from "./Button";
+import { useRouter } from "next/navigation";
 
 type NavbarProps = {
   cartItemsCount?: number;
@@ -12,6 +14,7 @@ export default function Navbar({
 }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const router = useRouter();
 
   const categories = [
     "Electronics",
@@ -118,9 +121,8 @@ export default function Navbar({
         {/* Right Side */}
         <div className="flex items-center gap-3">
           {/* Cart */}
-          <Link
-            href="/cart"
-            className="relative rounded-lg p-2 text-white transition hover:bg-white/10"
+          <Button
+            onClick={() => router.push('/cart')}
           >
             <svg
               width="24"
@@ -134,18 +136,11 @@ export default function Navbar({
               <circle cx="19" cy="20" r="1" />
               <path d="M3 4H5L7.5 15.5C7.7 16.4 8.5 17 9.4 17H18.4C19.3 17 20.1 16.4 20.3 15.5L22 8H6" />
             </svg>
-
-            {cartItemsCount > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-like-red px-1 text-[10px] font-bold text-white">
-                {cartItemsCount}
-              </span>
-            )}
-          </Link>
+          </Button>
 
           {/* Profile */}
-          <Link
-            href="/profile"
-            className="rounded-lg p-2 text-white transition hover:bg-white/10"
+          <Button
+            onClick={() => router.push('/profile')}
           >
             <svg
               width="24"
@@ -158,11 +153,12 @@ export default function Navbar({
               <circle cx="12" cy="8" r="4" />
               <path d="M4 21C5 17 8 14 12 14C16 14 19 17 20 21" />
             </svg>
-          </Link>
+          </Button>
 
           {/* Login */}
-          <Link
-            href="/login"
+          <Button
+            variant="secondary"
+            onClick={() => router.push('/login')}
             className={`hidden items-center 
               gap-2 rounded-lg bg-like-yellow px-4 
               py-2 font-semibold text-like-blue-main transition
@@ -183,12 +179,12 @@ export default function Navbar({
             </svg>
 
             Login
-          </Link>
+          </Button>
 
           {/* Mobile Menu */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="rounded-lg p-2 text-white hover:bg-white/10 md:hidden"
+            className="rounded-lg p-2 text-white md:hidden"
           >
             <svg
               width="24"
